@@ -1,0 +1,37 @@
+---
+title: "HW1_sara_barrett"
+output: html_document
+---
+
+
+
+```{r, echo=FALSE}
+#Load the iris data
+data(iris)
+#Load the ggplot2 library (used to produce the plot)
+library(ggplot2)
+#Load the reshape2 library (used to change the format of the dataframe)
+library(reshape2)
+
+#Reshape the data
+#Add a column to keep track of the flower 
+iris$flower_id<-rownames(iris)
+#Put the data into a long format, defining the default id variables 
+iris_melted<-melt(iris, id.vars=c("Species","flower_id"))
+#Split the variable so we can get the information we need (Sepal/Petal, Length/Width)
+split_variable<-strsplit(as.character(iris_melted$variable), split="\\.")
+#Create two new variables from the split variable, flower_part and measurement_type
+iris_melted$flower_part<-sapply(split_variable, "[", 1)
+iris_melted$measurement_type<-sapply(split_variable, "[", 2)
+#Remove the variable we don't need anymore
+iris_melted$variable<-NULL
+#Generate a table the lists the length and width of each flower part in the same row
+iris_cast<-dcast(iris_melted, formula=flower_id+Species+flower_part~measurement_type)
+
+#Describe the plot, add points, add free x-axis scales in the facet, add a regression line
+my_plot<-ggplot(data=iris_cast, aes(x=Width, y=Length))+geom_point()+facet_grid(Species~flower_part, scale="free_x")+geom_smooth(method="lm")
+
+#Display the final plot using the black and white theme
+my_plot+theme_bw(base_size=15)
+```
+
