@@ -1,19 +1,23 @@
 ---
 title: "HW1_sara_barrett"
+author:  "Sara Rassoulian Barrett"
 output: html_document
 ---
+## HW1
+Reproduce slide 27 of the lecture notes, plotting the iris data showing length vs width, facetting petal / sepal vs flower type
 
-
-
-```{r, echo=FALSE}
+## Load the data and packages
+```{r, echo=TRUE}
 #Load the iris data
 data(iris)
 #Load the ggplot2 library (used to produce the plot)
 library(ggplot2)
 #Load the reshape2 library (used to change the format of the dataframe)
 library(reshape2)
+```
 
-#Reshape the data
+## Reshape the data
+```{r, echo=TRUE}
 #Add a column to keep track of the flower 
 iris$flower_id<-rownames(iris)
 #Put the data into a long format, defining the default id variables 
@@ -27,10 +31,16 @@ iris_melted$measurement_type<-sapply(split_variable, "[", 2)
 iris_melted$variable<-NULL
 #Generate a table the lists the length and width of each flower part in the same row
 iris_cast<-dcast(iris_melted, formula=flower_id+Species+flower_part~measurement_type)
+```
 
-#Describe the plot, add points, add free x-axis scales in the facet, add a regression line
+## Format the plot
+```{r, echo=TRUE}
+#Define the plot, add points, add free x-axis scales in the facet, add a regression line
 my_plot<-ggplot(data=iris_cast, aes(x=Width, y=Length))+geom_point()+facet_grid(Species~flower_part, scale="free_x")+geom_smooth(method="lm")
+```
 
+## Display the iris data
+```{r, echo=TRUE}
 #Display the final plot using the black and white theme
 my_plot+theme_bw(base_size=15)
 ```
